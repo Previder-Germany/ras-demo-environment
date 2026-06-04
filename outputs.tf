@@ -57,3 +57,42 @@ output "private_ips" {
     sgw = azurerm_network_interface.sgw_nic.private_ip_address
   }
 }
+
+resource "local_file" "connection_info" {
+  filename        = "${path.module}/connection_info.md"
+  file_permission = "0600"
+  content         = <<-EOT
+# RAS Demo Environment – Connection Info
+
+> Generiert von Terraform am ${timestamp()}
+
+## Public Access
+
+| Service   | Adresse                                                              | Protokoll |
+|-----------|----------------------------------------------------------------------|-----------|
+| Jump Host | `${azurerm_public_ip.jmp_pip.ip_address}`                            | RDP 3389  |
+| RDP Link  | `mstsc /v:${azurerm_public_ip.jmp_pip.ip_address}`                   |           |
+| Jump FQDN | `${azurerm_public_ip.jmp_pip.fqdn}`                                  |           |
+| SGW       | `https://${azurerm_public_ip.sgw_pip.ip_address}`                    | HTTPS 443 |
+
+## Private IPs
+
+| VM  | Private IP                                                                          |
+|-----|-------------------------------------------------------------------------------------|
+| PDC | `${azurerm_network_interface.pdc_nic.private_ip_address}`                           |
+| RCB | `${azurerm_network_interface.subnet3_nics["rcb"].private_ip_address}`               |
+| WTS | `${azurerm_network_interface.subnet3_nics["wts"].private_ip_address}`               |
+| SGW | `${azurerm_network_interface.sgw_nic.private_ip_address}`                           |
+
+## Credentials
+
+- **Username:** `${var.vm_admin_username}`
+- **Password:** siehe `terraform.tfvars`
+
+## Infrastruktur
+
+- **Resource Group:** `${azurerm_resource_group.rg.name}`
+- **Location:** `${var.location}`
+- **Domain:** `${var.domain_name}`
+EOT
+}
