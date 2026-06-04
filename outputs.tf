@@ -33,6 +33,11 @@ output "sgw_public_ip" {
 }
 
 # Bonus: RDP/HTTPS Links (kopierbar)
+output "jump_host_fqdn" {
+  description = "Azure DNS FQDN für demo-jmp-01 (z.B. für Zertifikate oder RDP per Hostname)"
+  value       = azurerm_public_ip.jmp_pip.fqdn
+}
+
 output "jump_rdp_connection" {
   description = "Direkter RDP Link für demo-jmp-01"
   value       = "mstsc /v:${azurerm_public_ip.jmp_pip.ip_address}"

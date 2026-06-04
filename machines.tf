@@ -245,7 +245,8 @@ resource "azurerm_public_ip" "jmp_pip" {
   location            = azurerm_resource_group.rg.location
   sku                 = "Standard"
   allocation_method   = "Static"
-  
+  domain_name_label   = "${var.prefix}-jmp-01"
+
   tags = local.vm_common.vm_tags
 }
 
